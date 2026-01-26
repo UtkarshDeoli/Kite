@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-browser-agent
+    ports:
+      - "8000:8000"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-openai/gpt-4o}
+      - DATABASE_PATH=/app/data/agent.db
+      - LOG_FILE=/app/data/logs/agent.log
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - HEADLESS_MODE=${HEADLESS_MODE:-true}
+      - ENABLE_LEARNING=${ENABLE_LEARNING:-true}
+      - ENABLE_BROWSER_TOOLS=${ENABLE_BROWSER_TOOLS:-true}
+      - ENABLE_YOUTUBE_TOOLS=${ENABLE_YOUTUBE_TOOLS:-false}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/data/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    stdin_open: true
+    tty: true
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: agent-postgres
+    environment:
+      POSTGRES_DB=agent
+      POSTGRES_USER=agent
+      POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-agent_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "agent", "-d", "agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: agent-network

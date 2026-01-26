@@ -1,0 +1,38 @@
+# Telegram Bot
+python-telegram-bot==20.6
+aiofiles==23.2.1
+
+# LLM and Embeddings
+openai==1.12.0
+# anthropic removed — no compatible wheel for this Python version; re-add if needed
+sentence-transformers==2.2.2
+numpy
+
+# Browser Automation
+browser-use==0.1.7
+playwright>=1.48.0
+httpx~=0.25.0
+
+# Database
+aiosqlite==0.19.0
+
+# Configuration and Utilities
+python-dotenv>=1.0.1,<2
+pydantic>=2.9.2,<3
+pyyaml==6.0.1
+
+# Async Support
+# (removed asyncio-compat — incompatible with this Python version)
+# YouTube Tools (optional)
+yt-dlp==2023.12.30
+# openai-whisper removed — build fails on this Python version; re-add if needed
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+
+# Development
+black==23.12.1
+ruff==0.1.15
+mypy==1.8.0
