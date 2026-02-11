@@ -17,9 +17,9 @@ def setup_environment():
     from pathlib import Path
     
     directories = [
-        "/app/data",
-        "/app/data/logs",
-        "/app/data/youtube"
+        "./data",
+        "./data/logs",
+        "./data/youtube"
     ]
     
     for directory in directories:

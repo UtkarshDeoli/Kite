@@ -136,6 +136,21 @@ CREATE TABLE IF NOT EXISTS linkedin_profiles (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+-- Embeddings table for semantic search
+CREATE TABLE IF NOT EXISTS embeddings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    content_id INTEGER,
+    table_name TEXT NOT NULL,
+    content TEXT NOT NULL,
+    embedding BLOB,  -- Store pickle-serialized numpy array
+    metadata TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_embeddings_table ON embeddings(table_name);
+CREATE INDEX IF NOT EXISTS idx_embeddings_content ON embeddings(content_id, table_name);
+
 -- Create indexes for performance optimization
 CREATE INDEX IF NOT EXISTS idx_workflows_user_id ON workflows(user_id);
 CREATE INDEX IF NOT EXISTS idx_workflows_category ON workflows(category);
